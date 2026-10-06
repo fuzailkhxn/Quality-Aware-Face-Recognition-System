@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Quality-Aware Adaptive Learning for Robust Face Recognition
 
 > AI-Based Face Recognition System with Image Quality Assessment and Adaptive Confidence
@@ -322,3 +323,6 @@ Decision: ❌ UNKNOWN PERSON
 ## 📜 License
 
 This project is developed for academic and educational purposes.
+=======
+# Quality-Aware-Face-Recognition-System
+>>>>>>> 1c1658d4fc4364969e8eb98f738db2c25ca8843b
