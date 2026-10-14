@@ -120,7 +120,7 @@ with st.sidebar:
     st.header("⚙️ Navigation")
     page = st.radio(
         "Go to",
-        ["🏠 Dashboard", "📸 Recognize Face", "🧪 Quality Simulator", "👤 Register Person", "📊 Database Info"],
+        ["Dashboard", "Recognize Face", "Quality Simulator", "Register Person", "Database Info"],
         index=1
     )
     
@@ -151,8 +151,8 @@ with st.sidebar:
 
 
 # ─── Dashboard Page ────────────────────────────────────────────────
-if page == "🏠 Dashboard":
-    st.header("🏠 Dashboard")
+if page == "Dashboard":
+    st.header("Dashboard")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -171,57 +171,65 @@ if page == "🏠 Dashboard":
     
     st.divider()
     
-    st.subheader("📋 System Architecture")
-    st.markdown("""
-    ```
-    INPUT IMAGE
-         ↓
-    ┌─────────────────┐
-    │  Face Detection  │ ← OpenCV Haar Cascade
-    └────────┬────────┘
+    st.subheader("System Architecture")
+    
+    # Path where you can put your architecture image
+    arch_image_path = os.path.join(PROJECT_ROOT, "images", "architecture.png")
+    
+    if os.path.exists(arch_image_path):
+        st.image(arch_image_path, caption="System Architecture Pipeline", use_container_width=True)
+    else:
+        # Fallback to diagram text if image not found
+        st.markdown("""
+        ```
+        INPUT IMAGE
              ↓
-    ┌─────────────────┐
-    │  Face Cropping   │ ← With margin padding
-    └────────┬────────┘
-             ↓
-    ┌─────────────────┐
-    │ Quality Assessment│ ← Sharpness, Brightness, Contrast, Size, Illumination
-    └────────┬────────┘
-             ↓
-    ┌─────────────────┐
-    │Quality Score 0-100│ ← Weighted combination
-    └────────┬────────┘
-             ↓
-    ┌─────────────────────┐
-    │ Adaptive Preprocessing│ ← Enhancement based on quality level
-    └────────┬────────────┘
-             ↓
-    ┌─────────────────┐
-    │ Face Embedding   │ ← OpenCV SFace (128-d vector)
-    └────────┬────────┘
-             ↓
-    ┌─────────────────────────┐
-    │ Similarity Comparison    │ ← Cosine similarity with database
-    └────────┬────────────────┘
-             ↓
-    ┌──────────────────────────┐
-    │ Quality-Aware Confidence  │ ← Adjusted threshold per quality level
-    └────────┬─────────────────┘
-             ↓
-    ┌─────────────────┐
-    │ Final Decision   │ ← RECOGNIZED / UNKNOWN / UNRELIABLE
-    └─────────────────┘
-    ```
-    """)
+        ┌─────────────────┐
+        │  Face Detection  │ ← OpenCV YuNet DNN
+        └────────┬────────┘
+                 ↓
+        ┌─────────────────┐
+        │  Face Cropping   │ ← With margin padding
+        └────────┬────────┘
+                 ↓
+        ┌─────────────────┐
+        │ Quality Assessment│ ← Sharpness, Brightness, Contrast, Size, Illumination
+        └────────┬────────┘
+                 ↓
+        ┌─────────────────┐
+        │Quality Score 0-100│ ← Weighted combination
+        └────────┬────────┘
+                 ↓
+        ┌─────────────────────┐
+        │ Adaptive Preprocessing│ ← Enhancement based on quality level
+        └────────┬────────────┘
+                 ↓
+        ┌─────────────────┐
+        │ Face Embedding   │ ← OpenCV SFace (128-d vector)
+        └────────┬────────┘
+                 ↓
+        ┌─────────────────────────┐
+        │ Similarity Comparison    │ ← Cosine similarity with database
+        └────────┬────────────────┘
+                 ↓
+        ┌──────────────────────────┐
+        │ Quality-Aware Confidence  │ ← Adjusted threshold per quality level
+        └────────┬─────────────────┘
+                 ↓
+        ┌─────────────────┐
+        │ Final Decision   │ ← RECOGNIZED / UNKNOWN / UNRELIABLE
+        └─────────────────┘
+        ```
+        """)
     
     st.divider()
     
-    st.subheader("🎯 Quality-Aware Adaptive Logic")
+    st.subheader("Quality-Aware Adaptive Logic")
     
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("""
-        #### 🟢 High Quality (80-100)
+        #### High Quality (80-100)
         - Normal recognition threshold
         - Full confidence in result
         - Standard processing
@@ -229,7 +237,7 @@ if page == "🏠 Dashboard":
         """)
     with col2:
         st.markdown("""
-        #### 🟡 Medium Quality (60-79)
+        #### Medium Quality (60-79)
         - Moderate enhancement applied
         - Slightly stricter threshold
         - Reduced confidence multiplier
@@ -237,7 +245,7 @@ if page == "🏠 Dashboard":
         """)
     with col3:
         st.markdown("""
-        #### 🔴 Low Quality (0-59)
+        #### Low Quality (0-59)
         - Aggressive enhancement
         - Much stricter threshold
         - Significantly reduced trust
@@ -281,7 +289,7 @@ elif page == "📸 Recognize Face":
                     
                     # Show cropped face
                     if result["face_crop"] is not None:
-                        st.subheader("✂️ Detected Face")
+                        st.subheader("✅ Detected Face")
                         st.image(bgr_to_rgb(result["face_crop"]), width=200)
                 
                 with col_result:
@@ -335,19 +343,19 @@ elif page == "📸 Recognize Face":
                         # Quality Level
                         ql = result['quality_level']
                         if ql == "High":
-                            st.success(f"🟢 Quality Level: **{ql}** — Full confidence recognition")
+                            st.success(f"Quality Level: **{ql}** — Full confidence recognition")
                         elif ql == "Medium":
-                            st.warning(f"🟡 Quality Level: **{ql}** — Moderate confidence")
+                            st.warning(f"Quality Level: **{ql}** — Moderate confidence")
                         else:
-                            st.error(f"🔴 Quality Level: **{ql}** — Recognition less reliable")
+                            st.error(f"Quality Level: **{ql}** — Recognition less reliable")
                         
                         # Decision details
                         if result["decision_details"]:
-                            st.info(f"📋 {result['decision_details']}")
+                            st.info(f"{result['decision_details']}")
                         
                         # Enhancements applied
                         if result["enhancements"]:
-                            st.write("**🔧 Preprocessing Applied:**")
+                            st.write("**Preprocessing Applied:**")
                             for enh in result["enhancements"]:
                                 st.write(f"  • {enh}")
                         
@@ -431,8 +439,8 @@ elif page == "📸 Recognize Face":
 
 
 # ─── Quality Simulator Page ──────────────────────────────────────
-elif page == "🧪 Quality Simulator":
-    st.header("🧪 Image Quality Simulation")
+elif page == "Quality Simulator":
+    st.header("Image Quality Simulation")
     st.markdown("""
     This tool demonstrates how image quality affects recognition.
     Upload an image, apply degradations, and compare the results.
@@ -450,7 +458,7 @@ elif page == "🧪 Quality Simulator":
         if original is None:
             st.error("Could not load image.")
         else:
-            st.subheader("🎛️ Quality Degradation Controls")
+            st.subheader("Quality Degradation Controls")
             
             col_ctrl1, col_ctrl2 = st.columns(2)
             
@@ -461,9 +469,9 @@ elif page == "🧪 Quality Simulator":
                                               help="Lower = darker image")
             
             with col_ctrl2:
-                contrast_factor = st.slider("🎨 Contrast", 0.1, 2.0, 1.0, step=0.1,
+                contrast_factor = st.slider("Contrast", 0.1, 2.0, 1.0, step=0.1,
                                             help="Lower = washed out")
-                noise_amount = st.slider("📡 Noise", 0, 80, 0, step=5,
+                noise_amount = st.slider("Noise", 0, 80, 0, step=5,
                                          help="Add random noise")
             
             # Apply degradations
@@ -498,7 +506,7 @@ elif page == "🧪 Quality Simulator":
             
             # Display comparison
             st.divider()
-            st.subheader("📊 Comparison: Original vs Degraded")
+            st.subheader("Comparison: Original vs Degraded")
             
             col_orig, col_deg = st.columns(2)
             
